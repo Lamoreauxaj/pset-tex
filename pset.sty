@@ -1,0 +1,116 @@
+\ProvidesPackage{pset}
+\RequirePackage[utf8]{inputenc}
+\RequirePackage{fancyhdr}
+\RequirePackage{amsthm}
+\RequirePackage{amsmath}
+\RequirePackage{amssymb}
+\RequirePackage[inline]{enumitem}
+\RequirePackage{lastpage}
+\RequirePackage{afterpage}
+\RequirePackage{indentfirst}
+\RequirePackage{mathtools}
+\RequirePackage{pgfplots}
+\RequirePackage{float}
+\RequirePackage{ifthen}
+\RequirePackage{xparse}
+\RequirePackage{geometry}
+\RequirePackage{ifthen}
+\RequirePackage{array}
+\RequirePackage{forarray}
+\RequirePackage{environ}
+\RequirePackage{etoolbox}
+\RequirePackage{gensymb}
+\RequirePackage{algorithm}
+% \RequirePackage{algorithmicx}
+\RequirePackage{algpseudocode}
+\RequirePackage{url}
+% \RequirePackage[nofillcomment, linesnumbered, ruled]{algorithm2e}
+
+\usetikzlibrary{patterns}
+\pgfplotsset{compat=1.5.1}
+
+\RequirePackage[patch]{kvoptions}
+\SetupKeyvalOptions{family=pset, prefix=pset@}
+\DeclareStringOption[Problem\ Set]{title}
+\DeclareStringOption[Aaron\ Lamoreaux]{author}
+\DeclareStringOption[\ ]{class}
+\DeclareStringOption[\today]{due}
+\DeclareStringOption[\ ]{prof}
+\DeclareStringOption[\ ]{tas}
+\ProcessLocalKeyvalOptions* 
+
+\newcounter{problemnum}
+\xdef\problemlist{\empty}
+
+\newcommand{\formatdocument}{%
+    \newgeometry{top=1cm, bottom=1cm, left=2cm, right=2cm, includehead, includefoot}
+    \pagestyle{fancy}
+    \fancyhf{}
+    \setlength{\headheight}{.60cm}
+    \rhead{\pset@author}
+    \lhead{\pset@title}
+    \cfoot{\thepage}
+    \fancyfoot[C]{\thepage\ of \pageref{LastPage}}
+    \fancypagestyle{firstpage}{
+        \fancyhf{}
+        \setlength{\headheight}{1.60cm}
+        \lhead{\textbf{\pset@title} \\ \pset@class \\ \pset@due}
+        \rhead{\textbf{\pset@author} \\ \pset@prof \\ \pset@tas}
+        \fancyfoot[C]{\vspace*{-1.33cm}\thepage\ of \pageref{LastPage}}
+    }
+}
+
+\NewEnviron{problem}[1][default]{
+    \refstepcounter{problemnum}
+    \ifthenelse{\equal{#1}{default}}{
+        \xdef\problemname{Problem \theproblemnum}
+    }{
+        \xdef\problemname{#1}
+    }
+    \edef\problemid{problemset@\theproblemnum}
+    \expandafter\xdef\csname\problemid\endcsname{\noexpand\subsection*{\problemname} \expandonce{\BODY}}
+    \xdef\problemlist{\problemlist;\theproblemnum}
+}
+
+\NewEnviron{preproblem}{
+    \edef\preproblemid{problemset@preproblem\theproblemnum}
+    \expandafter\xdef\csname\preproblemid\endcsname{\expandonce{\BODY}}
+}
+
+\NewEnviron{solution}{
+    \edef\solutionid{problemset@solution\theproblemnum}
+    \expandafter\xdef\csname\solutionid\endcsname{\noexpand\subsubsection*{Solution} \expandonce{\BODY}}
+}
+
+\newcommand{\displayproblems}{
+    \ForEachX{;}{
+        \ifthenelse{\equal{\thislevelitem}{}}{}{
+            \edef\preproblemid{problemset@preproblem\thislevelitem}
+            \edef\problemid{problemset@\thislevelitem}
+            \edef\solutionid{problemset@solution\thislevelitem}
+            \csname\preproblemid\endcsname
+            \csname\problemid\endcsname
+            \csname\solutionid\endcsname
+        }
+    }{\problemlist}
+}
+
+\newcommand{\makepset}{
+    \thispagestyle{firstpage}
+    \enlargethispage{-1cm}
+    \displayproblems{}
+}
+
+\newtheorem*{theoremx}{Theorem}
+\newtheorem{theorem}{Theorem}
+\newtheorem*{claimx}{Claim}
+\newtheorem{claim}{Claim}
+\newtheorem*{lemmax}{Lemma}
+\newtheorem{lemma}{Lemma}
+
+\newcommand{\im}{\operatorname{Im}}
+
+% \makeatletter
+% \newcommand{\RemoveAlgoNumber}{\renewcommand{\fnum@algocf}{\AlCapSty{\AlCapFnt\algorithmcfname}}}
+% \newcommand{\RevertAlgoNumber}{\algocf@resetfnum}
+% \makeatother
