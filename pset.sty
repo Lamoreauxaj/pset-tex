@@ -19,12 +19,12 @@
 \RequirePackage{forarray}
 \RequirePackage{environ}
 \RequirePackage{etoolbox}
+\RequirePackage{textcomp}
 \RequirePackage{gensymb}
 \RequirePackage{algorithm}
-% \RequirePackage{algorithmicx}
 \RequirePackage{algpseudocode}
 \RequirePackage{url}
-% \RequirePackage[nofillcomment, linesnumbered, ruled]{algorithm2e}
+\RequirePackage{tcolorbox}
 
 \usetikzlibrary{patterns}
 \pgfplotsset{compat=1.5.1}
@@ -37,6 +37,7 @@
 \DeclareStringOption[\today]{due}
 \DeclareStringOption[\ ]{prof}
 \DeclareStringOption[\ ]{tas}
+\DeclareStringOption[false]{contents}
 \ProcessLocalKeyvalOptions* 
 
 \newcounter{problemnum}
@@ -93,6 +94,24 @@
             \csname\solutionid\endcsname
         }
     }{\problemlist}
+}
+
+\NewEnviron{exercise}[1][Exercise]{
+    \begin{tcolorbox}[title=Exercise 1.1]
+        \BODY
+    \end{tcolorbox}
+}
+
+% \NewEnviron{exercise*}[1][Exercise]{
+% }
+
+\newcommand{\makedoc}{
+    \thispagestyle{firstpage}
+    \enlargethispage{-1cm}
+    \ifthenelse{\equal{\pset@contents}{false}}{}{
+        \tableofcontents
+        \newpage
+    }
 }
 
 \newcommand{\makepset}{
